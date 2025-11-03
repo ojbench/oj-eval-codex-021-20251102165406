@@ -19,15 +19,35 @@ int main() {
         }
     }
 
-    // Baseline control policy:
-    // - On the first bottom touch, set horizontal velocity to +2 (operation 'E').
-    // - For all subsequent touches (up to m in total), keep velocity unchanged ('C').
-    // This yields a constant |vx| = 2 trajectory which tends to traverse
-    // many columns due to wall reflections, providing a reasonable baseline.
+    // Heuristic control policy:
+    // Maintain and cycle the horizontal speed magnitude through a pattern
+    // to diversify trajectories and cover more bricks than a single slope.
+    // We do not simulate physics here; we only track |vx| changes we apply.
 
     if (m <= 0) return 0;
-    cout << 'E' << '\n';
-    for (int i = 1; i < m; ++i) cout << 'C' << '\n';
+
+    // Desired magnitude cycle (repeat): ramp up and down modestly
+    static const int cycle_vals[] = {1,2,3,4,5,6,7,6,5,4,3,2};
+    const int L = (int)(sizeof(cycle_vals)/sizeof(cycle_vals[0]));
+
+    int mag = 0; // current |vx| magnitude we control via ops
+    auto emit = [&](int delta){
+        char op;
+        if (delta <= -2) { op = 'A'; delta = -2; }
+        else if (delta == -1) { op = 'B'; }
+        else if (delta == 0) { op = 'C'; }
+        else if (delta == 1) { op = 'D'; }
+        else /* delta >= 2 */ { op = 'E'; delta = 2; }
+        cout << op << '\n';
+        mag += delta;
+    };
+
+    // First step: move to 2 quickly
+    emit(2);
+    for (int i = 1; i < m; ++i) {
+        int target = cycle_vals[i % L];
+        int delta = target - mag;
+        emit(delta);
+    }
     return 0;
 }
-
