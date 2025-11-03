@@ -1,5 +1,5 @@
 CXX ?= g++
-CXXFLAGS ?= -O2 -std=c++17 -pipe -static -s
+CXXFLAGS ?= -O2 -std=c++17 -pipe -s
 
 all: code
 
