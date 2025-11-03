@@ -13,9 +13,10 @@ int main() {
 
     // Read the brick colors (2n lines, each with 2n numbers)
     // Colors are not used in this baseline strategy.
+    long long color_sum = 0;
     for (int i = 0; i < 2 * n; ++i) {
         for (int j = 0; j < 2 * n; ++j) {
-            int c; cin >> c; (void)c;
+            int c; cin >> c; color_sum += c;
         }
     }
 
@@ -28,7 +29,7 @@ int main() {
 
     // Desired magnitude cycle (repeat): ramp up and down.
     // Use a wider range based on n but cap to keep paths stable.
-    int K = min(31, max(7, 2 * n - 1));
+    int K = min(63, max(7, 2 * n - 1));
     vector<int> cycle_vals;
     cycle_vals.reserve(2 * K);
     for (int v = 1; v <= K; ++v) cycle_vals.push_back(v);
@@ -49,8 +50,9 @@ int main() {
 
     // First step: move to 2 quickly
     emit(2);
+    int off = (int)( (color_sum % L + L) % L );
     for (int i = 1; i < m; ++i) {
-        int target = cycle_vals[i % L];
+        int target = cycle_vals[(i + off) % L];
         int delta = target - mag;
         emit(delta);
     }
