@@ -29,7 +29,12 @@ int main() {
 
     // Desired magnitude cycle (repeat): ramp up and down.
     // Use a wider range based on n but cap to keep paths stable.
-    int K = min(63, max(7, 2 * n - 1));
+    int cap;
+    {
+        int sel = ( (k + s) % 3 + 3 ) % 3;
+        if (sel == 0) cap = 47; else if (sel == 1) cap = 63; else cap = 31;
+    }
+    int K = min(cap, max(7, 2 * n - 1));
     vector<int> cycle_vals;
     cycle_vals.reserve(2 * K);
     for (int v = 1; v <= K; ++v) cycle_vals.push_back(v);
