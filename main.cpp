@@ -26,9 +26,14 @@ int main() {
 
     if (m <= 0) return 0;
 
-    // Desired magnitude cycle (repeat): ramp up and down modestly
-    static const int cycle_vals[] = {1,2,3,4,5,6,7,6,5,4,3,2};
-    const int L = (int)(sizeof(cycle_vals)/sizeof(cycle_vals[0]));
+    // Desired magnitude cycle (repeat): ramp up and down.
+    // Use a wider range based on n but cap to keep paths stable.
+    int K = min(31, max(7, 2 * n - 1));
+    vector<int> cycle_vals;
+    cycle_vals.reserve(2 * K);
+    for (int v = 1; v <= K; ++v) cycle_vals.push_back(v);
+    for (int v = K - 1; v >= 2; --v) cycle_vals.push_back(v);
+    const int L = (int)cycle_vals.size();
 
     int mag = 0; // current |vx| magnitude we control via ops
     auto emit = [&](int delta){
